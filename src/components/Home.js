@@ -377,19 +377,36 @@ try{
     }
     catch(err)
     {
-      console.log(err.error.message);
-     
-    
-      setSuccess(<Alert variant="danger">
-      <Alert.Heading>Error</Alert.Heading>
-      <p>
-        Something went Wrong {err.error.message}
-      </p>
-      
-      </Alert>);
-
-setSpin(<Button  type="submit" style={{padding:'20px',backgroundColor:'#2FAC66',width:'100%'}} variant="success"><span style={{color:'black',fontSize:'23px'}} className="democ" >Mint</span>
+      setSpin(<Button  type="submit" style={{padding:'20px',backgroundColor:'#2FAC66',width:'100%'}} variant="success"><span style={{color:'black',fontSize:'23px'}} className="democ" >Mint</span>
 </Button>);
+setSuccess(<Alert variant="danger">
+<Alert.Heading>Error</Alert.Heading>
+<p>
+  Something went Wrong 
+</p>
+
+</Alert>);
+     
+     if(err.error.message)
+     {
+   setSuccess(<Alert variant="danger">
+    <Alert.Heading>Error</Alert.Heading>
+    <p>
+      Something went Wrong {err.error.message}
+    </p>
+    
+    </Alert>);
+     }
+     else
+     {
+      console.log("exited");
+     }
+  // else
+   //{
+    
+   //}
+
+
     
    
     }
