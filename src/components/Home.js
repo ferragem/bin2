@@ -218,7 +218,7 @@ try{
    const tree = new MerkleTree(leaves, keccak256,  { sortPairs: true })
    const buf2hex = x => '0x' + x.toString('hex')
    const getroot = buf2hex(tree.getRoot());
-   console.log(getroot);
+   console.log(getroot)
   
    const leaf = keccak256(account);
    
@@ -326,7 +326,7 @@ try{
  try{
   const account = await Moralis.account;
    
-  const it = ['0x9d1bad4c173785cdd66744d3dc60bed62e325284','0x55A35DCBdBa3049F3cB2f24f48a3791950F8DF73','0xdc7f552706774cb868E9C3d270B04b560B033C43']
+  const it = ['0x9d1bad4c173785cdd66744d3dc60bed62e325284','0x55A35DCBdBa3049F3cB2f24f48a3791950F8DF73','0xdc7f552706774cb868E9C3d270B04b560B033C43','0x57e9f4feD17a7A48a1e77ab3ed0D6908ACe4e163','0xCe7a747D529caa125DC83AC4227c0D2Da1C76E89','0xEc2Df8E979FB45C9Df814713E4A6bb1f55847d12'];
 
   const leaves = it.map(x => keccak256(x));
   //console.log(leaves);
