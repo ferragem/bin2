@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef, useCallback, formRef } from 'react'
 
 import { Table, Icon, Avatar, Tag, NFTBalance, Skeleton } from 'web3uikit';
 
-import { Container, Spinner, Row, Col,Carousel,CarouselItem, Button, Alert, Card, CardGroup} from 'react-bootstrap';
+import { Container, Spinner, Row, Col,Carousel,CarouselItem, Button, Alert, Card, CardGroup, Form} from 'react-bootstrap';
 
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 //import Web3 from "web3";
-
+import { useMoralisWeb3Api } from "react-moralis";
 import { useMoralis } from "react-moralis";
 import axios from 'axios';
 
@@ -22,10 +22,11 @@ function Home()
 {
     const { Moralis, authenticate, isAuthenticated,  logout, isAuthenticating, setUserData, web3, isWeb3Enabled, isWeb3EnableLoading, web3EnableError, user,isInitialized } = useMoralis();
 
-  
+    const Web3Api = useMoralisWeb3Api();
     const [nftnumber, setNftnumber] = useState();
     const [hiddenInput,setHiddenInput] = useState("0");
     const [success, setSuccess] = useState("");
+    const [level,setLevel] = useState("1");
     const [loads, setLoads] = useState();
     const [spin, setSpin] = useState(<Button type="submit" style={{padding:'20px',backgroundColor:'#2FAC66',width:'100%'}} variant="success"><span style={{color:'black',fontSize:'23px'}} className="democ" >Mint</span>
    </Button>);
@@ -46,8 +47,20 @@ function Home()
      }
    }, []);
    */
+
+   const fetchTokenIdMetadata = async () => {
+    const options = {
+      address: "0x09cE49970F8B3224aFA2eaf4026c749A9a131F33",
+      token_id: "77",
+      chain: "bsc",
+    };
+    const tokenIdMetadata = await Web3Api.token.getTokenIdMetadata(options);
+    console.log(tokenIdMetadata);
+  };
    
    useEffect(()=> {
+
+    fetchTokenIdMetadata();
     console.log(user.get("ethAddress"));
      setLoads(<Row><Col><Skeleton width="280px" height='200px' theme="image" /><br/><Skeleton width="100px" theme="text" /><br/><Skeleton width="250px" theme="text" /><br/><Skeleton width="250px" theme="text" /></Col><Col><Skeleton width="280px" height='200px' theme="image" /><br/><Skeleton width="100px" theme="text" /><br/><Skeleton width="250px" theme="text" /><br/><Skeleton width="250px" theme="text" /></Col><Col><Skeleton width="280px" height='200px' theme="image" /><br/><Skeleton width="100px" theme="text" /><br/><Skeleton width="250px" theme="text" /><br/><Skeleton width="250px" theme="text" /></Col><Col><Skeleton width="280px" height='200px' theme="image" /><br/><Skeleton width="100px" theme="text" /><br/><Skeleton width="250px" theme="text" /><br/><Skeleton width="250px" theme="text" /></Col> </Row>);
      const timer = setTimeout(() => {
@@ -352,7 +365,7 @@ try{
        
        
           account: account,
-          id: 1,
+          id: level,
           amount: 1,
           proof: proof
         
@@ -372,7 +385,13 @@ try{
    
  const receipt =   await minted.wait(1);
    
-  
+ setSuccess(<Alert variant="success">
+    <Alert.Heading>Success</Alert.Heading>
+    <p>
+      Successfully minted
+    </p>
+    
+    </Alert>);
          
     
     }
@@ -414,7 +433,14 @@ setSuccess(<Alert variant="danger">
 
     setSpin(<Button  type="submit" style={{padding:'20px',backgroundColor:'#2FAC66',width:'100%'}} variant="success"><span style={{color:'black',fontSize:'23px'}} className="democ" >Mint</span>
     </Button>);
+
+
     
+  }
+
+  function handleChange(e) {
+    setLevel(e.target.value);
+    console.log(level);
   }
 
     return(
@@ -429,6 +455,13 @@ setSuccess(<Alert variant="danger">
         <br/><br/>
         <form onSubmit={mintNfts}>
         <h3>Mint an NFT</h3>
+        <h4>Select Pass Type</h4>
+        <Form.Select onChange={(e) => handleChange(e)}>
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+  </Form.Select>
 
         <br/><br/><div className="form-group">
          

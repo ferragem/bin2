@@ -30,7 +30,7 @@
     "web3uikit": "^0.1.140"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "react-app-rewired --max_old_space_size=32096 start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject"
