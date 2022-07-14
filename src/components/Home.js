@@ -9,6 +9,8 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 import { useMoralisWeb3Api } from "react-moralis";
 import { useMoralis } from "react-moralis";
 import axios from 'axios';
+import { getDocs, collection, doc } from "firebase/firestore";
+import { db } from "./firebase-config";
 
 
 import tokenContractMintAbi from './MintAbi';
@@ -23,6 +25,8 @@ function Home()
     const { Moralis, authenticate, isAuthenticated,  logout, isAuthenticating, setUserData, web3, isWeb3Enabled, isWeb3EnableLoading, web3EnableError, user,isInitialized } = useMoralis();
 
     const Web3Api = useMoralisWeb3Api();
+    const [accountLists, setAccountList] = useState([]);
+    const postsCollectionRef = collection(db, "whitelist");
     const [nftnumber, setNftnumber] = useState();
     const [hiddenInput,setHiddenInput] = useState("0");
     const [success, setSuccess] = useState("");
@@ -48,7 +52,7 @@ function Home()
    }, []);
    */
 
-   const fetchTokenIdMetadata = async () => {
+ /*  const fetchTokenIdMetadata = async () => {
     const options = {
       address: "0x09cE49970F8B3224aFA2eaf4026c749A9a131F33",
       token_id: "77",
@@ -57,15 +61,31 @@ function Home()
     const tokenIdMetadata = await Web3Api.token.getTokenIdMetadata(options);
     console.log(tokenIdMetadata);
   };
-   
+   */
    useEffect(()=> {
 
-    fetchTokenIdMetadata();
+    const getPosts = async () => {
+      const data = await getDocs(postsCollectionRef);
+    //  console.log(data.docs[0]._document.data.value.mapValue.fields.creator.mapValue.fields.name.stringValue);
+    console.log(data.docs[0]._document.data.value.mapValue.fields.address.stringValue);
+      setAccountList(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      const t = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      const querySnapshot = await getDocs(postsCollectionRef);
+//querySnapshot.forEach((doc) => {
+  // doc.data() is never undefined for query doc snapshots
+  //console.log(doc.data().address);
+//});
+console.log(querySnapshot.query);
+    };
+
+    getPosts();
+
+    //fetchTokenIdMetadata();
     console.log(user.get("ethAddress"));
      setLoads(<Row><Col><Skeleton width="280px" height='200px' theme="image" /><br/><Skeleton width="100px" theme="text" /><br/><Skeleton width="250px" theme="text" /><br/><Skeleton width="250px" theme="text" /></Col><Col><Skeleton width="280px" height='200px' theme="image" /><br/><Skeleton width="100px" theme="text" /><br/><Skeleton width="250px" theme="text" /><br/><Skeleton width="250px" theme="text" /></Col><Col><Skeleton width="280px" height='200px' theme="image" /><br/><Skeleton width="100px" theme="text" /><br/><Skeleton width="250px" theme="text" /><br/><Skeleton width="250px" theme="text" /></Col><Col><Skeleton width="280px" height='200px' theme="image" /><br/><Skeleton width="100px" theme="text" /><br/><Skeleton width="250px" theme="text" /><br/><Skeleton width="250px" theme="text" /></Col> </Row>);
      const timer = setTimeout(() => {
-       loadNFTs();
-       setLoads("");
+     //  loadNFTs();
+      // setLoads("");
      }, 1000);
      return () => clearTimeout(timer);
      
@@ -226,6 +246,7 @@ try{
    
    const it = ['0x9d1bad4c173785cdd66744d3dc60bed62e325284','0x55A35DCBdBa3049F3cB2f24f48a3791950F8DF73','0xdc7f552706774cb868E9C3d270B04b560B033C43','0x57e9f4feD17a7A48a1e77ab3ed0D6908ACe4e163','0xCe7a747D529caa125DC83AC4227c0D2Da1C76E89'];
 
+  // console.log(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
    const leaves = it.map(x => keccak256(x));
    //console.log(leaves);
    const tree = new MerkleTree(leaves, keccak256,  { sortPairs: true })
@@ -338,11 +359,24 @@ try{
    
  try{
   const account = await Moralis.account;
+
+ 
+   //   const querySnapshot = await getDocs(postsCollectionRef);
+//querySnapshot.forEach((doc) => {
+  // doc.data() is never undefined for query doc snapshots
+  //console.log(doc.data().address);
+//});
+    
    
   const it = ['0x9d1bad4c173785cdd66744d3dc60bed62e325284','0x55A35DCBdBa3049F3cB2f24f48a3791950F8DF73','0xdc7f552706774cb868E9C3d270B04b560B033C43','0x57e9f4feD17a7A48a1e77ab3ed0D6908ACe4e163','0xCe7a747D529caa125DC83AC4227c0D2Da1C76E89','0xEc2Df8E979FB45C9Df814713E4A6bb1f55847d12'];
-
+//const it = doc.data().address;
+console.log(it);
   const leaves = it.map(x => keccak256(x));
-  //console.log(leaves);
+
+  
+
+  
+  console.log(leaves);
   const tree = new MerkleTree(leaves, keccak256,  { sortPairs: true })
   const buf2hex = x => '0x' + x.toString('hex')
   const getroot = buf2hex(tree.getRoot());
@@ -397,22 +431,23 @@ try{
     }
     catch(err)
     {
+      console.log(err.error.message);
       setSpin(<Button  type="submit" style={{padding:'20px',backgroundColor:'#2FAC66',width:'100%'}} variant="success"><span style={{color:'black',fontSize:'23px'}} className="democ" >Mint</span>
 </Button>);
 setSuccess(<Alert variant="danger">
 <Alert.Heading>Error</Alert.Heading>
 <p>
-  Something went Wrong 
+  Something went Wrong  {err.error.message}
 </p>
 
 </Alert>);
      
-     if(err.error.message)
+    /* if(err)
      {
    setSuccess(<Alert variant="danger">
     <Alert.Heading>Error</Alert.Heading>
     <p>
-      Something went Wrong {err.error.message}
+      Something went Wrong {err}
     </p>
     
     </Alert>);
@@ -420,7 +455,7 @@ setSuccess(<Alert variant="danger">
      else
      {
       console.log("exited");
-     }
+     }*/
   // else
    //{
     

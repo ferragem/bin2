@@ -8,7 +8,7 @@ function Home2()
     return(
         <div>
 
-test
+Not Logged in
 
         </div>
     )
