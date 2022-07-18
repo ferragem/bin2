@@ -88,7 +88,7 @@ if(!isAuthenticated)
     </Navbar.Brand>
 
     <Nav className='play'>
-    <Nav.Link href="/transactions">Transactions</Nav.Link>
+    
     <Nav.Link href="#connect"><ConnectButton
   chainId={97}
   signingMessage="Test Signin"
